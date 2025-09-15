@@ -6,3 +6,9 @@ export default function Stats(){
         <p className="opacity-80">current guests</p>
     </section>
 }
+
+
+
+
+
+
