@@ -1,15 +1,10 @@
+'use client'
 import Image from "next/image";
+import {usePetContext} from "@/lib/hooks";
 
-type Pet = {
-    id: string;
-    name: string;
-    ownerName: string;
-    imageUrl: string;
-    age: number;
-    notes: string;
-};
 
-export default function PetList({pets}: { pets: Pet[] }) {
+export default function PetList() {
+    const {pets} = usePetContext();
     return (
         <ul className="bg-white border-b border-black/[0.08]">
             {pets.map((pet) => (
