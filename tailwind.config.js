@@ -6,13 +6,13 @@ const tailwindConfig = {
         "./components/**/*.{js,ts,jsx,tsx,mdx}",
         "./src/**/*.{js,ts,jsx,tsx,mdx}"
     ],
-    // theme: {
-    //     extend: {
-    //         colors: {
-    //             accent: '#a4f839'
-    //         }
-    //     },
-    // },
+    theme: {
+        extend: {
+            colors: {
+                light: 'rgba(0,0,0,0.08)',
+            }
+        },
+    },
     plugins: [],
 }
 

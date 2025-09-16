@@ -3,6 +3,7 @@ import AppFooter from "@/components/app-footer";
 import BackgroundPattern from "@/components/background-pattern";
 import AppHeader from "@/components/app-header";
 import PetContextProvider from "@/contexts/pet-context-provider";
+import SearchContextProvider from "@/contexts/search-context-provider";
 
 async function Layout({children}: { children: React.ReactNode }) {
     const response = await fetch('https://bytegrad.com/course-assets/projects/petsoft/api/pets');
@@ -13,9 +14,11 @@ async function Layout({children}: { children: React.ReactNode }) {
             <BackgroundPattern/>
             <div className='max-w-[1050px] mx-auto px-4 flex flex-col min-h-screen'>
                 <AppHeader/>
-                <PetContextProvider data={data}>
-                    {children}
-                </PetContextProvider>
+                <SearchContextProvider>
+                    <PetContextProvider data={data}>
+                        {children}
+                    </PetContextProvider>
+                </SearchContextProvider>
                 <AppFooter/>
             </div>
         </>

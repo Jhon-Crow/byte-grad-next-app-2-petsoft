@@ -25,7 +25,7 @@ function EmptyView(){
 
 function TopBar({pet}: { pet: Pet | null }) {
     return (
-        <div className={'flex items-center bg-white px-8 py-5 border-b border-black/[0.08]'}>
+        <div className={'flex items-center bg-white px-8 py-5 border-b border-light'}>
             <Image
                 src={pet?.imageUrl}
                 alt="Selected pet image"
@@ -53,7 +53,7 @@ function OtherInfo({pet}: { pet: Pet | null }) {
 }
 
 function Notes({pet}: { pet: Pet | null }) {
-    return (<section className={'bg-white px-7 py-5 rounded-md mb-9 mx-8 flex-1 border-black/[0.08] border'}>
+    return (<section className={'bg-white px-7 py-5 rounded-md mb-9 mx-8 flex-1 border-light border'}>
         {pet?.notes}
     </section>)
 }

@@ -4,6 +4,7 @@ import {Pet} from "@/lib/types";
 
 type PetsContextType = {
     pets: Pet[],
+    numberOfPets: number,
     selectedPetId: string | null,
     selectedPet: Pet | null,
     handleChangeSelectedPetId: (id: string) => void
@@ -11,14 +12,21 @@ type PetsContextType = {
 export const PetContext = createContext<PetsContextType | null>(null);
 
 export default function PetContextProvider(
-    {children, data}: { children: React.ReactNode , data: Pet[]}
+    {children, data}: { children: React.ReactNode, data: Pet[] }
 ) {
     const [pets, setPets] = useState(data);
     const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
     const selectedPet = pets.find((pet) => pet.id === selectedPetId) || null;
+    const numberOfPets = pets.length;
     const handleChangeSelectedPetId = (id: string) => setSelectedPetId(id);
     return (
-        <PetContext.Provider value={{pets, selectedPetId, selectedPet, handleChangeSelectedPetId}}>
+        <PetContext.Provider value={{
+            pets,
+            numberOfPets,
+            selectedPetId,
+            selectedPet,
+            handleChangeSelectedPetId
+        }}>
             {children}
         </PetContext.Provider>
     )
