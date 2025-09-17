@@ -19,6 +19,7 @@ export default function PetContextProvider(
     const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
     const selectedPet = pets.find((pet) => pet.id === selectedPetId) || null;
     const numberOfPets = pets.length;
+    const handleAddPet = (newPet: Pet) => setPets([...pets, newPet]);
     const handleChangeSelectedPetId = (id: string) => setSelectedPetId(id);
     const handleCheckoutPet = (id: string) => {
         setPets(pets.filter((pet) => pet.id !== id));
