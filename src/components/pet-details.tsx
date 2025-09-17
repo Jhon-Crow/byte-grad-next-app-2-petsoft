@@ -2,6 +2,7 @@
 import Image from "next/image";
 import {usePetContext} from "@/lib/hooks";
 import {Pet} from "@/lib/types";
+import PetButton from "@/components/pet-button";
 
 export default function PetDetails() {
     const {selectedPet} = usePetContext();
@@ -18,12 +19,14 @@ export default function PetDetails() {
     )
 }
 
-function EmptyView(){
+function EmptyView() {
     return <p className={'h-full flex justify-center items-center text-2xl font-medium'}>No pet selected</p>
 }
 
 
 function TopBar({pet}: { pet: Pet | null }) {
+    const {handleCheckoutPet} = usePetContext();
+    if (!pet) return null;
     return (
         <div className={'flex items-center bg-white px-8 py-5 border-b border-light'}>
             <Image
@@ -34,6 +37,12 @@ function TopBar({pet}: { pet: Pet | null }) {
                 className="h-[75px] w-[75px] rounded-full object-cover"
             />
             <h2 className="text-3xl font-semibold leading-7 ml-5">{pet?.name}</h2>
+            <div className={'ml-auto'}>
+                <PetButton actionType={'edit'}>Edit</PetButton>
+                <PetButton
+                    onClick={() => handleCheckoutPet(pet?.id)}
+                    actionType={'checkout'}>Checkout</PetButton>
+            </div>
         </div>)
 }
 
