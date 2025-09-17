@@ -8,7 +8,8 @@ type PetsContextType = {
     selectedPetId: string | null,
     selectedPet: Pet | null,
     handleChangeSelectedPetId: (id: string) => void,
-    handleCheckoutPet: (id: string) => void
+    handleCheckoutPet: (id: string) => void,
+    handleAddPet: (newPet: Omit<Pet, 'id'>) => void
 }
 export const PetContext = createContext<PetsContextType | null>(null);
 
@@ -19,7 +20,7 @@ export default function PetContextProvider(
     const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
     const selectedPet = pets.find((pet) => pet.id === selectedPetId) || null;
     const numberOfPets = pets.length;
-    const handleAddPet = (newPet: Pet) => setPets([...pets, newPet]);
+    const handleAddPet = (newPet: Omit<Pet, 'id'>) => setPets([...pets, {id: crypto.randomUUID(), ...newPet}]);
     const handleChangeSelectedPetId = (id: string) => setSelectedPetId(id);
     const handleCheckoutPet = (id: string) => {
         setPets(pets.filter((pet) => pet.id !== id));
@@ -31,6 +32,7 @@ export default function PetContextProvider(
             numberOfPets,
             selectedPetId,
             selectedPet,
+            handleAddPet,
             handleChangeSelectedPetId,
             handleCheckoutPet
         }}>
