@@ -16,13 +16,13 @@ type PetsContextType = {
 export const PetContext = createContext<PetsContextType | null>(null);
 
 export default function PetContextProvider(
-    {children, data}: { children: React.ReactNode, data: Pet[] }
+    {children, data: pets}: { children: React.ReactNode, data: Pet[] }
 ) {
-    const [pets, setPets] = useState(data);
+    // const [pets, setPets] = useState(data);
     const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
     const selectedPet = pets.find((pet) => pet.id === selectedPetId) || null;
     const numberOfPets = pets.length;
-    const handleAddPet = async (newPet: Omit<Pet, 'id'>) => await addPet(newPet);
+    const handleAddPet = async (newPet: FormData) => await addPet(newPet);
     const handleEditPet = (petId: string, newPetData: Omit<Pet, 'id'>) => setPets(
         pets.map(
             (pet) => pet.id === petId ? {id: pet.id, ...newPetData} : pet
