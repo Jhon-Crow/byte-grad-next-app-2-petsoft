@@ -12,7 +12,7 @@ type Props = {
 }
 
 export default function PetForm({actionType, onFormSubmission}: Props) {
-    const {handleAddPet} = usePetContext();
+    const {handleEditPet, handleAddPet, selectedPet} = usePetContext();
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -23,7 +23,11 @@ export default function PetForm({actionType, onFormSubmission}: Props) {
             age: +(formData.get('age') as string),
             notes: formData.get('notes') as string,
         };
-        handleAddPet(newPet);
+        if (actionType === 'add') {
+            handleAddPet(newPet);
+        } else if (actionType === 'edit') {
+            handleEditPet(selectedPet!.id, newPet);
+        }
         onFormSubmission();
     }
     return (
@@ -31,23 +35,34 @@ export default function PetForm({actionType, onFormSubmission}: Props) {
             <div className={'space-y-3'}>
                 <div className='space-y-1'>
                     <Label htmlFor={'name'}>Name</Label>
-                    <Input name={'name'} id={'name'} type={'text'} required/>
+                    <Input name={'name'} id={'name'} type={'text'} required
+                           defaultValue={actionType === 'edit' ? selectedPet?.name : ''}
+                    />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'ownerName'}>Owner Name</Label>
-                    <Input name={'ownerName'} id={'ownerName'} type={'text'} required/>
+                    <Input name={'ownerName'} id={'ownerName'} type={'text'} required
+                           defaultValue={actionType === 'edit' ? selectedPet?.ownerName : ''}
+                    />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'imageUrl'}>Image Url</Label>
-                    <Input name={'imageUrl'} id={'imageUrl'} type={'text'}/>
+                    <Input name={'imageUrl'} id={'imageUrl'} type={'text'}
+                           defaultValue={actionType === 'edit' ? selectedPet?.imageUrl : ''}
+                    />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'age'}>Age</Label>
-                    <Input name={'age'} id={'age'} type={'text'} required/>
+                    <Input name={'age'} id={'age'} type={'text'} required
+                           defaultValue={actionType === 'edit' ? selectedPet?.age : ''}
+                    />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'notes'}>Notes</Label>
-                    <Textarea name={'notes'} id={'notes'} rows={3} required/>
+                    <Textarea
+                        name={'notes'} id={'notes'} rows={3} required
+                        defaultValue={actionType === 'edit' ? selectedPet?.notes : ''}
+                    />
                 </div>
             </div>
             <Button type={'submit'} className={'mt-5 self-end'}>
