@@ -3,9 +3,10 @@ import React from 'react';
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
 import {usePetContext} from "@/lib/hooks";
-import {addPet} from "@/actions/actions";
+import {addPet, editPet} from "@/actions/actions";
+import PetFormBtn from "@/components/pet-form-btn";
+import {toast} from "sonner";
 
 type Props = {
     actionType: 'edit' | 'add',
@@ -17,7 +18,11 @@ export default function PetForm({actionType, onFormSubmission}: Props) {
     return (
         <form className={'flex-col flex'}
               action={async (formData) => {
-                  await addPet(formData);
+                  const error = actionType === 'add' ? await addPet(formData) : await editPet(selectedPet!.id, formData);
+                  if (error) {
+                      toast.error(error.message);
+                      return;
+                  }
                   onFormSubmission();
               }}
         >
@@ -54,9 +59,7 @@ export default function PetForm({actionType, onFormSubmission}: Props) {
                     />
                 </div>
             </div>
-            <Button type={'submit'} className={'mt-5 self-end'}>
-                {actionType === 'add' ? 'Add a new pet' : 'Edit pet'}
-            </Button>
+            <PetFormBtn actionType={actionType}/>
         </form>
     )
 }

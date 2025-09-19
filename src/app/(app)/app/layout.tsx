@@ -5,6 +5,7 @@ import AppHeader from "@/components/app-header";
 import PetContextProvider from "@/contexts/pet-context-provider";
 import SearchContextProvider from "@/contexts/search-context-provider";
 import {prisma} from "@/lib/db";
+import {Toaster} from "@/components/ui/sonner";
 
 async function Layout({children}: { children: React.ReactNode }) {
     const pets = await prisma.pet.findMany();
@@ -21,6 +22,7 @@ async function Layout({children}: { children: React.ReactNode }) {
                 </SearchContextProvider>
                 <AppFooter/>
             </div>
+            <Toaster position={"bottom-right"}/>
         </>
 
     );
