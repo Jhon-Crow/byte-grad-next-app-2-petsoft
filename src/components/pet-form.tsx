@@ -13,41 +13,59 @@ type Props = {
     onFormSubmission: () => void
 }
 
-export default function PetForm({actionType, onFormSubmission}: Props) {
-    const {selectedPet} = usePetContext();
+export default function PetForm({
+                                    actionType,
+                                    onFormSubmission
+                                }: Props) {
+    const {
+        selectedPet,
+        handleAddPet,
+        handleEditPet
+    } = usePetContext();
     return (
         <form className={'flex-col flex'}
               action={async (formData) => {
-                  const error = actionType === 'add' ? await addPet(formData) : await editPet(selectedPet!.id, formData);
+                  onFormSubmission();
+                  const petData = {
+                      name: formData.get('name') as string,
+                      ownerName: formData.get('ownerName') as string,
+                      imageUrl: formData.get('imageUrl') as string || 'https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png',
+                      age: parseInt(formData.get('age') as string),
+                      notes: formData.get('notes') as string
+                  };
+                  const error = actionType === 'add' ? await handleAddPet(petData) : await handleEditPet(selectedPet!.id, petData);
                   if (error) {
                       toast.error(error.message);
                       return;
                   }
-                  onFormSubmission();
               }}
         >
             <div className={'space-y-3'}>
                 <div className='space-y-1'>
                     <Label htmlFor={'name'}>Name</Label>
-                    <Input name={'name'} id={'name'} type={'text'} required
+                    <Input name={'name'} id={'name'} type={'text'}
+                           required
                            defaultValue={actionType === 'edit' ? selectedPet?.name : ''}
                     />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'ownerName'}>Owner Name</Label>
-                    <Input name={'ownerName'} id={'ownerName'} type={'text'} required
+                    <Input name={'ownerName'} id={'ownerName'}
+                           type={'text'} required
                            defaultValue={actionType === 'edit' ? selectedPet?.ownerName : ''}
                     />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'imageUrl'}>Image Url</Label>
-                    <Input name={'imageUrl'} id={'imageUrl'} type={'text'}
+                    <Input name={'imageUrl'} id={'imageUrl'}
+                           type={'text'}
                            defaultValue={actionType === 'edit' ? selectedPet?.imageUrl : ''}
                     />
                 </div>
                 <div className='space-y-1'>
                     <Label htmlFor={'age'}>Age</Label>
-                    <Input name={'age'} id={'age'} type={'text'} required
+                    <Input name={'age'} id={'age'} type={'text'}
+                           required
                            defaultValue={actionType === 'edit' ? selectedPet?.age : ''}
                     />
                 </div>
