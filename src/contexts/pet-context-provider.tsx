@@ -23,20 +23,41 @@ export default function PetContextProvider(
     {children, data}:
         { children: React.ReactNode, data: Pet[] }
 ) {
-    const [optimisticPets, setOptimisticPets] = useOptimistic(data, (state, newPet: Omit<Pet, 'id'>) => [...state, {
-        ...newPet,
-        id: crypto.randomUUID()
-    }]);
+    const [optimisticPets, setOptimisticPets] = useOptimistic(data, (state, {
+        action,
+        payload
+    }) => {
+        switch (action) {
+            case 'add':
+                return [...state, {
+                    ...payload,
+                    id: crypto.randomUUID()
+                }];
+            case 'edit':
+                return state.map((pet) => pet.id === payload.id ? {...pet, ...payload.newPetData} : pet);
+            case 'delete':
+                return state.filter((pet) => pet.id !== payload);
+            default:
+                return state;
+        }
+    });
     const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
     const selectedPet = optimisticPets.find((pet) => pet.id === selectedPetId) || null;
     const numberOfPets = optimisticPets.length;
     const handleAddPet = async (newPet: Omit<Pet, 'id'>) => {
-        setOptimisticPets(newPet);
+        setOptimisticPets({action: 'add', payload: newPet});
         return await addPet(newPet);
     };
     const handleChangeSelectedPetId = (id: string) => setSelectedPetId(id);
-    const handleEditPet = async (petId: string, newPetData: Omit<Pet, 'id'>) => await editPet(petId, newPetData);
+    const handleEditPet = async (petId: string, newPetData: Omit<Pet, 'id'>) => {
+        setOptimisticPets({
+            action: 'edit',
+            payload: {newPetData, id: petId}
+        });
+        return await editPet(petId, newPetData);
+    }
     const handleCheckoutPet = async (petId: string) => {
+        setOptimisticPets({action: 'delete', payload: petId});
         await deletePet(petId);
         setSelectedPetId(null);
     };
