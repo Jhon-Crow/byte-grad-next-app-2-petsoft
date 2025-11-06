@@ -2,13 +2,20 @@
 
 import {prisma} from "@/lib/db";
 import {revalidatePath} from "next/cache";
-import {PetEssentials} from "@/lib/types";
-import {Pet} from "@/generated/prisma";
+import {petFormSchema, petIdSchema} from "@/lib/validations";
 
-export async function addPet(pet: PetEssentials) {
+export async function addPet(pet: unknown) {
+
+    const validatedPet = petFormSchema.safeParse(pet);
+    if (!validatedPet.success) {
+        return {
+            message: "Invalid pet data"
+        }
+    }
+
     try {
         await prisma.pet.create({
-            data: pet
+            data: validatedPet.data
         })
     } catch (error) {
         return {
@@ -18,13 +25,22 @@ export async function addPet(pet: PetEssentials) {
     revalidatePath('/app', 'layout');
 }
 
-export async function editPet(petId: Pet['id'], newPetData: PetEssentials) {
+export async function editPet(petId: unknown, newPetData: unknown) {
+
+    const validatedPetId = petIdSchema.safeParse(petId);
+    const validatedPet = petFormSchema.safeParse(newPetData);
+    if (!validatedPetId.success || !validatedPet.success) {
+        return {
+            message: "Invalid pet data"
+        }
+    }
+
     try {
         await prisma.pet.update({
             where: {
-                id: petId
+                id: validatedPetId.data
             },
-            data: newPetData
+            data: validatedPet.data
         })
     } catch (error) {
         return {
@@ -34,11 +50,19 @@ export async function editPet(petId: Pet['id'], newPetData: PetEssentials) {
     revalidatePath('/app', 'layout');
 }
 
-export async function deletePet(petId: Pet['id']) {
+export async function deletePet(petId: unknown) {
+    const validatedPetId = petIdSchema.safeParse(petId);
+
+    if (!validatedPetId.success) {
+        return {
+            message: "Invalid pet data"
+        }
+    }
+
     try {
         await prisma.pet.delete({
             where: {
-                id: petId
+                id: validatedPetId.data
             }
         });
     } catch (error) {
