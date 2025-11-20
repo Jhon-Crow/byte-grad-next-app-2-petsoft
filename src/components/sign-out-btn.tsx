@@ -1,10 +1,20 @@
 'use client';
-import React from 'react';
+import React, {useTransition} from 'react';
 import {Button} from "@/components/ui/button";
 import {logOut} from "@/actions/actions";
 
 export default function SignOutBtn() {
+    const [isPending, startTransition] = useTransition();
     return (
-        <Button onClick={async () => await logOut()}>Sign out</Button>
+        <Button
+            disabled={isPending}
+            onClick={async () => {
+                startTransition(async () => {
+                    await logOut();
+                })
+            }}
+        >
+            Sign out
+        </Button>
     )
 }
