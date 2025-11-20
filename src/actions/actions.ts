@@ -1,11 +1,12 @@
 'use server';
 import {prisma} from "@/lib/db";
 import {revalidatePath} from "next/cache";
-import {petFormSchema, petIdSchema} from "@/lib/validations";
+import {authSchema, petFormSchema, petIdSchema} from "@/lib/validations";
 import {signIn, signOut} from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import {checkAuth, getPetById} from "@/lib/server-utils";
 import {redirect} from "next/navigation";
+import {Prisma} from "@/generated/prisma";
 
 // --- User actions ---
 export async function logIn(formData: unknown) {
@@ -19,15 +20,45 @@ export async function logIn(formData: unknown) {
     redirect('/app/dashboard');
 }
 
-export async function signUp(formData: FormData) {
-    const hashedPassword = await bcrypt.hash(formData.get('password') as string, 10);
+export async function signUp(formData: unknown) {
+    if (!(formData instanceof FormData)) {
+        return {
+            message: "Invalid form data"
+        }
+    }
+    const formDataObj = Object.fromEntries(formData);
+
+    const validatedFormData = authSchema.safeParse(formDataObj);
+    if (!validatedFormData.success) {
+        return {
+            message: "Invalid form data"
+        }
+    }
+
+    const {email, password} = validatedFormData.data;
+    const hashedPassword = await bcrypt.hash(
+        password, 10
+    );
+try {
     await prisma.user.create({
         data: {
-            email: formData.get('email') as string,
+            email: email,
             hashedPassword,
         }
     })
-    await signIn('credentials', formData);
+ } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+            return {
+                message: 'User already exists'
+            }
+        }
+    }
+    return {
+        message: 'Coudn\'t create user'
+    }
+ }
+    await signIn('credentials', validatedFormData.data);
 }
 
 export async function logOut() {
@@ -78,7 +109,7 @@ export async function editPet(petId: unknown, newPetData: unknown) {
 
     const pet = await getPetById(validatedPetId.data);
 
-    if (!pet){
+    if (!pet) {
         return {
             message: "Pet not found"
         }
@@ -116,7 +147,7 @@ export async function deletePet(petId: unknown) {
     }
 
     const pet = await getPetById(validatedPetId.data);
-    if (!pet){
+    if (!pet) {
         return {
             message: "Pet not found"
         }

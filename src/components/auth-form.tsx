@@ -1,16 +1,14 @@
 import React from 'react';
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {Button} from "@/components/ui/button";
 import {logIn, signUp} from "@/actions/actions";
+import AuthFormBtn from "@/components/auth-form-btn";
 
 type AuthFormProps = {
     type: 'login' | 'signup';
 }
 
-export default function AuthForm({
-                                     type
-                                 }: AuthFormProps) {
+export default function AuthForm({type}: AuthFormProps) {
     return (
         <form action={type === 'login' ? logIn : signUp}>
             <div className={'space-y-1'}>
@@ -34,7 +32,7 @@ export default function AuthForm({
                     placeholder={'Password'}
                 />
             </div>
-            <Button>{type === 'signup' ? 'Sign up' : 'Log in'}</Button>
+            <AuthFormBtn type={type}/>
         </form>
     )
 }
