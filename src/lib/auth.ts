@@ -34,18 +34,33 @@ const config = {
     callbacks: {
         authorized: ({auth, request}) => {
             const isAuth = auth?.user;
-            const isTryingToAccessApp = request.nextUrl.pathname.includes('app');
+            const isTryingToAccessApp = request.nextUrl.pathname.includes('/app');
 
             if (isTryingToAccessApp && !isAuth) {
-                return Response.redirect(new URL('/login', request.nextUrl));
+                return false;
             }
 
-            if (isAuth && isTryingToAccessApp) {
+            if (!isAuth && request.nextUrl.pathname.includes('/payment')) {
+                return false;
+            }
+
+            if (isAuth && isTryingToAccessApp && !auth?.user.hasAccess) {
+                return Response.redirect(new URL('/payment', request.nextUrl));
+            }
+
+            if (isAuth && isTryingToAccessApp && auth?.user.hasAccess) {
                 return true;
             }
 
             if (isAuth && !isTryingToAccessApp) {
-                return Response.redirect(new URL('/app/dashboard', request.nextUrl));
+                if (
+                    (request.nextUrl.pathname.includes('/login') ||
+                        request.nextUrl.pathname.includes('/signup')) &&
+                    !auth?.user.hasAccess
+                ) {
+                    return Response.redirect(new URL('/payment', request.nextUrl));
+                }
+                return true;
             }
 
             if (!isAuth && !isTryingToAccessApp) {
@@ -56,12 +71,14 @@ const config = {
         jwt: ({token, user}) => {
             if (user) {
                 token.userId = user.id;
+                token.hasAccess = user.hasAccess;
             }
             return token;
         },
         session: ({session, token}) => {
             if (session.user) {
                 session.user.id = token.userId;
+                session.user.hasAccess = token.hasAccess;
             }
             return session;
         }
