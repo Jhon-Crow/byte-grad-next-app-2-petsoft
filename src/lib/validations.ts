@@ -20,3 +20,10 @@ export const petFormSchema = z.object({
     }))
 
 export type TFormData = z.infer<typeof petFormSchema>;
+
+export const authSchema = z.object({
+    email: z.string().email().max(100),
+    password: z.string(),
+})
+
+export type TAuth = z.infer<typeof authSchema>;

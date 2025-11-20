@@ -4,19 +4,12 @@ import BackgroundPattern from "@/components/background-pattern";
 import AppHeader from "@/components/app-header";
 import PetContextProvider from "@/contexts/pet-context-provider";
 import SearchContextProvider from "@/contexts/search-context-provider";
-import {prisma} from "@/lib/db";
 import {Toaster} from "@/components/ui/sonner";
-import {auth} from "@/lib/auth";
-import {redirect} from "next/navigation";
+import {checkAuth, getPetsByUserId} from "@/lib/server-utils";
 
 async function Layout({children}: { children: React.ReactNode }) {
-    const session = await auth();
-    if (!session?.user) {
-        redirect('/login');
-    }
-    const pets = await prisma.pet.findMany({
-        where: {userId: session.user.id},
-    });
+    const session = await checkAuth();
+    const pets = await getPetsByUserId(session.user.id);
 
     return (
         <>
