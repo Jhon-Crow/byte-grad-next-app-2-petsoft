@@ -1,18 +1,17 @@
 'use client';
-import React from 'react';
+import React, {useActionState} from 'react';
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {logIn, signUp} from "@/actions/actions";
 import AuthFormBtn from "@/components/auth-form-btn";
-import {useFormState} from "react-dom";
 
 type AuthFormProps = {
     type: 'login' | 'signup';
 }
 
 export default function AuthForm({type}: AuthFormProps) {
-    const [signUpError, dispatchSignUp] = useFormState(signUp, undefined);
-    const [logInError, dispatchLogIn] = useFormState(logIn, undefined);
+    const [signUpError, dispatchSignUp] = useActionState(signUp, undefined);
+    const [logInError, dispatchLogIn] = useActionState(logIn, undefined);
 
     return (
         <form action={type === 'login' ? dispatchLogIn : dispatchSignUp}>

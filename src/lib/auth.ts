@@ -35,7 +35,6 @@ const config = {
         authorized: ({auth, request}) => {
             const isAuth = auth?.user;
             const isTryingToAccessApp = request.nextUrl.pathname.includes('/app');
-
             if (isTryingToAccessApp && !isAuth) {
                 return false;
             }
@@ -60,7 +59,7 @@ const config = {
                 ) {
                     return Response.redirect(new URL('/payment', request.nextUrl));
                 }
-                return true;
+                return Response.redirect(new URL('/app/dashboard', request.nextUrl));
             }
 
             if (!isAuth && !isTryingToAccessApp) {
@@ -68,18 +67,26 @@ const config = {
             }
             return false;
         },
-        jwt: ({token, user}) => {
+        jwt: async ({token, user, trigger}) => {
             if (user) {
                 token.userId = user.id;
+                token.email = user.email!;
                 token.hasAccess = user.hasAccess;
             }
+
+            if (trigger === 'update') {
+                const userFromDb = await getUserByEmail(token.email);
+                if (userFromDb) {
+                    token.hasAccess = userFromDb.hasAccess;
+                }
+            }
+
             return token;
         },
         session: ({session, token}) => {
-            if (session.user) {
-                session.user.id = token.userId;
-                session.user.hasAccess = token.hasAccess;
-            }
+            session.user.id = token.userId;
+            session.user.hasAccess = token.hasAccess;
+
             return session;
         }
     },

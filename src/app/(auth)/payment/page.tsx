@@ -3,13 +3,27 @@ import React, {useTransition} from 'react';
 import H1 from "@/components/h1";
 import {Button} from "@/components/ui/button";
 import {createCheckoutSession} from "@/actions/actions";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 export default function Page({searchParams}: {
     searchParams: { [key: string]: string | string[] | undefined }
 }) {
     const [isPending, startTransition] = useTransition();
+    const {update} = useSession();
+    const router = useRouter();
+
+    const handleLoad = async () => {
+        await update(true);
+        router.push('/app/dashboard');
+    };
+
     return (
         <main className={'flex flex-col items-center space-y-10'}>
+
+            {searchParams.success && <Button onClick={handleLoad
+            }>Access PetSoft</Button>}
+
             <H1>PetSoft access requires payment</H1>
             {!searchParams.success && <Button
                 disabled={isPending}
