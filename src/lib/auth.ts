@@ -35,37 +35,26 @@ const config = {
         authorized: ({auth, request}) => {
             const isAuth = auth?.user;
             const isTryingToAccessApp = request.nextUrl.pathname.includes('/app');
-            if (isTryingToAccessApp && !isAuth) {
-                return false;
-            }
+            const hasAccess = auth?.user?.hasAccess;
 
-            if (!isAuth && request.nextUrl.pathname.includes('/payment')) {
-                return false;
-            }
+           if (isTryingToAccessApp){
+               if (isAuth && hasAccess) return true;
+               if (isAuth && !hasAccess) return Response.redirect(new URL('/payment', request.nextUrl));
+               if (!isAuth) return Response.redirect(new URL('/login', request.nextUrl));
+           }
 
-            if (isAuth && isTryingToAccessApp && !auth?.user.hasAccess) {
-                return Response.redirect(new URL('/payment', request.nextUrl));
-            }
+           if (!isAuth && !isTryingToAccessApp && !request.nextUrl.pathname.includes('payment')) {
+               return true;
+           }
 
-            if (isAuth && isTryingToAccessApp && auth?.user.hasAccess) {
-                return true;
-            }
+           if (isAuth && request.nextUrl.pathname.includes('login') || request.nextUrl.pathname.includes('signup')) {
+               if (!hasAccess) return Response.redirect(new URL('/payment', request.nextUrl));
+               if (hasAccess) return Response.redirect(new URL('/app/dashboard', request.nextUrl));
+           }
 
-            if (isAuth && !isTryingToAccessApp) {
-                if (
-                    (request.nextUrl.pathname.includes('/login') ||
-                        request.nextUrl.pathname.includes('/signup')) &&
-                    !auth?.user.hasAccess
-                ) {
-                    return Response.redirect(new URL('/payment', request.nextUrl));
-                }
-                return Response.redirect(new URL('/app/dashboard', request.nextUrl));
-            }
-
-            if (!isAuth && !isTryingToAccessApp) {
-                return true;
-            }
-            return false;
+           if (isAuth && request.nextUrl.pathname.includes('payment') && !hasAccess) {
+              return true;
+           }
         },
         jwt: async ({token, user, trigger}) => {
             if (user) {

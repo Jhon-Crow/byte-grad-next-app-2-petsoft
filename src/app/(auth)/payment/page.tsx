@@ -10,7 +10,7 @@ export default function Page({searchParams}: {
     searchParams: { [key: string]: string | string[] | undefined }
 }) {
     const [isPending, startTransition] = useTransition();
-    const {update} = useSession();
+    const {update, status, data: session} = useSession();
     const router = useRouter();
 
     const handleLoad = async () => {
@@ -21,8 +21,11 @@ export default function Page({searchParams}: {
     return (
         <main className={'flex flex-col items-center space-y-10'}>
 
-            {searchParams.success && <Button onClick={handleLoad
-            }>Access PetSoft</Button>}
+            {searchParams.success && <Button
+                disabled={status === 'loading' || session?.user.hasAccess}
+                onClick={handleLoad
+                }>Access PetSoft</Button>
+            }
 
             <H1>PetSoft access requires payment</H1>
             {!searchParams.success && <Button
