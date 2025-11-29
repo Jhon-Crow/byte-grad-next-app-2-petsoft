@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PetSoft Project 
 
-## Getting Started
+This project is a web application built with Next.js and TypeScript. It provides a dashboard for users to view and manage their data, and also includes a payment system with Stripe.
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [Prisma Database Generation](#prisma-database-generation)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   git clone https://github.com/your-username/your-project.git
+   ```
 
-## Learn More
+2. Install the dependencies:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   cd your-project
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Create a `.env.local` file in the root directory of the project and add the following environment variables:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```
+   NEXTAUTH_URL=<your-nextauth-url>
+   NEXTAUTH_SECRET=<your-nextauth-secret>
+   STRIPE_PUBLISHABLE_KEY=<your-stripe-publishable-key>
+   STRIPE_WEBHOOK_SECRET_KEY=<your-stripe-webhook-secret-key>
+   ```
 
-## Deploy on Vercel
+   Replace `<your-nextauth-url>`, `<your-nextauth-secret>`, `<your-stripe-publishable-key>`, and `<your-stripe-webhook-secret-key>` with your own values.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Start the development server:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   npm run dev
+   ```
+
+## Usage
+
+1. Open your browser and navigate to `http://localhost:3000`.
+
+2. Sign in with your email and password.
+
+3. Once signed in, you should be redirected to the dashboard page.
+
+4. From the dashboard page, you can view and manage your data.
+
+5. To make a payment, click on the "Buy lifetime access for $299" button on the payment page.
+
+6. After clicking the button, you will be redirected to the Stripe checkout page.
+
+7. Complete the payment process on the Stripe checkout page.
+
+8. After completing the payment, you will be redirected back to the payment page.
+
+9. On the payment page, you will see a button labeled "Access PetSoft". Clicking this button will redirect you to the PetSoft dashboard.
+
+## Features
+
+- User authentication with email and password
+- User authorization based on access level
+- Dashboard page for viewing and managing data
+- Responsive design for mobile devices
+- Payment system with Stripe
+
+## Contributing
+
+Contributions are welcome! If you find a bug or have a feature request, please open an issue on GitHub. If you want to contribute code, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your changes to your forked repository.
+5. Open a pull request to merge your changes into the main repository.
+
+## Prisma Database Generation
+
+To generate the Prisma database schema, follow these steps:
+
+1. Install the Prisma CLI globally:
+
+   ```bash
+   npm install -g prisma
+   ```
+
+2. Run the following command to generate the Prisma schema based on your database:
+
+   ```bash
+   npx prisma generate
+   ```
+
+   This command will generate the Prisma client based on your database schema.
+
+3. Make sure your database is running and accessible.
+
+4. Run the following command to migrate the database:
+
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+
+   This command will create the necessary tables in your database.
+
+   Note: If you are using a different database, you may need to modify the `schema.prisma` file to match your database schema.

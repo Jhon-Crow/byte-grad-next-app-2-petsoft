@@ -35,7 +35,7 @@ export default function Page({searchParams}: {
                         await createCheckoutSession();
                     })
                 }}
-            >By lifetime access for $299</Button>}
+            >Buy lifetime access for $299</Button>}
 
             {searchParams.success && (<p className={'text-sm text-green-700'}>
                 Payment successful! You now have lifetime access to PatSoft
