@@ -1,4 +1,4 @@
-import {PrismaClient} from "@/generated/prisma";
+import {PrismaClient} from "@/generated/prisma/edge";
 
 export const prisma = new PrismaClient()
 
@@ -13,5 +13,5 @@ main()
     .catch(async (e) => {
         console.error(e)
         await prisma.$disconnect()
-        process.exit(1)
+        // process.exit(1)
     })
